@@ -1,0 +1,5 @@
+
+\backend\node_modules
+\frontend\node_modules
+data
+docker-entrypoint-initdb.d
