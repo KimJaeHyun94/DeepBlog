@@ -9,6 +9,7 @@ export interface Board {
     imageFile: string,
     date?: Date,
     count?: number,
+    comments?: Comment[]
 }
 
 const schema = new Schema({
@@ -19,6 +20,11 @@ const schema = new Schema({
     imageFile: {type: String, required: false},
     date: {type: Date, required: true},
     count: {type: Number, required: true},
+    comments: [{
+        body: {type: String, required: true},
+        author: {type: mongoose.Schema.Types.ObjectId, ref:'user', required: true},
+        createdAt: {type: Date, default:Date.now}
+    }],
 })
 
 autoIncrement.initialize(mongoose.connection);

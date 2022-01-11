@@ -1,5 +1,5 @@
 import React from 'react';
-import { Provider } from 'mobx-react';
+// import { Provider } from 'mobx-react';
 import { Routes, Route } from 'react-router-dom';
 
 import Header from './header';
@@ -8,13 +8,15 @@ import BoardWrite from './board-write';
 import BoardContent from './board-content';
 // import Chat from './chat';
 import Admin from './admin/admin';
+import { Provider } from 'react-redux';
+import { store } from '../modules';
 
-import globalStore from '../store/store';
+// import globalStore from '../store/store';
 
 function Layout() {
     return (
         <>
-        <Provider globalStore={globalStore}>
+        <Provider store={store}>
             <Header/>
             <Routes>
                 <Route path='/board' element={<Board />}/>

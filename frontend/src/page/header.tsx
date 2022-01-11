@@ -9,13 +9,16 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
-import globalStore from '../store/store';
+// import globalStore from '../store/store';
 import AccountService from '../services/account-service';
+import { selectUserName, setUserName } from '../modules/user';
+import { useAppDispatch, useAppSelector } from '../hooks';
 
 function Header() {
     const navigate = useNavigate();
-
-	const routeChange = (url: string) => {
+    const userName = useAppSelector(selectUserName);
+	const dispatch = useAppDispatch();
+    const routeChange = (url: string) => {
 		navigate(url);
     }
 
@@ -24,7 +27,7 @@ function Header() {
         const result = await accountService.getProfile();
         
         if(result['name']) {
-            globalStore.setUserName(result['name']);
+            dispatch(setUserName(result['name']));
         }
     }
 
@@ -34,7 +37,7 @@ function Header() {
         }
       
         sessionStorage.removeItem("accessToken");
-        globalStore.setUserName('');
+        dispatch(setUserName(''));
         routeChange('/');
     }
 
@@ -46,10 +49,10 @@ function Header() {
         <div>
             <Box m={1}/>
             <Box display="flex" justifyContent="flex-end" alignItems="center">
-                {globalStore.userName !== '' ? 
+                {userName !== '' ? 
                     <>
                     <Box color={"#707070"} fontSize={14}>
-                        {globalStore.userName}님, 환영합니다!
+                        {userName}님, 환영합니다!
                     </Box>
                     <Box m={1}/>
                     <Button variant="outlined" color="primary" size="small" startIcon={<ExitToAppOutlinedIcon/>} onClick={() => logout()}>로그아웃</Button>
@@ -69,8 +72,7 @@ function Header() {
     )
 }
 
-//export default Header;
-
-export default inject(({ globalStore }) => ({
-    userName: globalStore.userName,
-}))(observer(Header));
+export default Header;
+// export default inject(({ globalStore }) => ({
+//     userName: globalStore.userName,
+// }))(observer(Header));

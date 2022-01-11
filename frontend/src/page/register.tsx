@@ -10,6 +10,9 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 
 import AccountService from '../services/account-service';
 import { User } from '../model/user';
+// import { setUserName, setUserEmail, setUserPassword, selectUserName, selectUserEmail, selectUserPassword } from '../modules/user';
+// import { useAppDispatch, useAppSelector } from '../hooks';
+// import { RootState, store } from '../modules';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -30,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
 function Register() {
 	const navigate = useNavigate();
 	const classes = useStyles();
+	// const email = useAppSelector(selectUserEmail);
+	// const name = useAppSelector(selectUserName);
+	// const password = useAppSelector(selectUserPassword);
+	// redux toolkit 적용으로 주석처리
 	const [user, setUser] = useState<User>({email: '', name: '', password: '', adminlevel: 0});
 	const [passwordCheck, setPasswordCheck] = useState<string>('');
 	const [error, setError] = useState<boolean>(false);

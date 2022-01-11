@@ -6,4 +6,5 @@ export interface Board {
     imageFile: string;
     date?: Date;
     count?: number;
+    userinfo?: any;
 }

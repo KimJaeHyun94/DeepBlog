@@ -18,11 +18,14 @@ import CreateIcon from '@material-ui/icons/Create';
 //import { withStyles } from "@material-ui/core/styles";
 
 import { dateFormatter } from '../utils';
-import globalStore from '../store/store';
+// import globalStore from '../store/store';
+import { selectBoardList, setBoardList } from '../modules/board';
 import BoardService from '../services/board-service';
 import { Board as BoardModel } from '../model/board';
 
 import config from '../config';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { selectUserName } from '../modules/user';
 
 // const styles = {
 //   input1: {
@@ -38,46 +41,59 @@ import config from '../config';
 // };
 
 // const handleChangeRowsPerPage = (event: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement>) => {
-	
+
 // };
 
 function Board() {
 	const height = 30;
 	const navigate = useNavigate();
-	const [boardList, setBoardList] = useState<any[]>([]);
+	const boardList = useAppSelector(selectBoardList);
+	const userName = useAppSelector(selectUserName);
+	const dispatch = useAppDispatch();
+	// redux toolkit 적용 시 필요없음
+	// const [boardList, setBoardList] = useState<any[]>([]);
 
-	const routeChange = (url: string) => {
-		navigate(url);
+	const routeChange = (url: string, data?: any) => {
+		navigate(url, { state: data });
 	}
 
-	function onClickItem(num: number) {
-		routeChange('/board_content?num=' + num);
+	function onClickItem(data: any) {
+		if (userName === "") {
+			alert("로그인 후 이용가능합니다.");
+			return;
+		}
+		const num = data.num;
+		if (num) {
+			routeChange(`/board_content?num=${num}`, data);
+		} else {
+			alert('상품 번호가 존재하지 않습니다.');
+		}
 	}
 
 	async function loadBoardList() {
-        const boardService = new BoardService();
-        const result: BoardModel[] = await boardService.find();
-		
-        if(result) {
+		const boardService = new BoardService();
+		const result: BoardModel[] = await boardService.find();
+
+		if (result) {
 			result.sort((a: BoardModel, b: BoardModel) => {
-				if(a.date && b.date){
+				if (a.date && b.date) {
 					const aDate = new Date(a.date).getTime();
 					const bDate = new Date(b.date).getTime();
 					return bDate - aDate;
 				}
 				return 0;
 			});
-			setBoardList(result);
-        }
+			dispatch(setBoardList(result));
+		}
 	}
-	
-	useEffect(() => {
-        loadBoardList();
-    }, []);
 
-	return(
-		<div style={{width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
-			<div style={{width: '90%'}}>
+	useEffect(() => {
+		loadBoardList();
+	}, []);
+
+	return (
+		<div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+			<div style={{ width: '90%' }}>
 				<TableContainer>
 					<Table>
 						<TableHead>
@@ -92,9 +108,9 @@ function Board() {
 						</TableHead>
 						<TableBody>
 							{boardList.map((data, i) => (
-								<TableRow style={{cursor: 'pointer'}} key={i} onClick={() => onClickItem(0)}>
+								<TableRow style={{ cursor: 'pointer' }} key={i} onClick={() => onClickItem(data)}>
 									<TableCell>{data.num}</TableCell>
-									<TableCell>{data.imageFile && <img src={config.apiServer + '/uploads/' + data.imageFile} alt=" " width="50px" height="50px"  />}</TableCell>
+									<TableCell>{data.imageFile && <img src={config.apiServer + '/uploads/' + data.imageFile} alt=" " width="50px" height="50px" />}</TableCell>
 									<TableCell>{data.title}</TableCell>
 									<TableCell>{data.userinfo[0].name}</TableCell>
 									<TableCell>{data.date && dateFormatter(data.date)}</TableCell>
@@ -104,25 +120,25 @@ function Board() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<Box m={2}/>
+				<Box m={2} />
 				<Box display="flex" justifyContent="space-between">
-					<Box m={1}/>
+					<Box m={1} />
 					<Box>
-						<Pagination count={11} defaultPage={1} siblingCount={0} variant="outlined" color="primary"/>
+						<Pagination count={11} defaultPage={1} siblingCount={0} variant="outlined" color="primary" />
 					</Box>
 					<Box display="flex">
-						{globalStore.userName !== '' &&
-							<Button variant="outlined" color="primary" size="small" startIcon={<CreateIcon/>} onClick={() => routeChange('/board_write')}>
+						{userName !== '' &&
+							<Button variant="outlined" color="primary" size="small" startIcon={<CreateIcon />} onClick={() => routeChange('/board_write')}>
 								글쓰기
 							</Button>
 						}
-						<Box m={1}/>
+						<Box m={1} />
 					</Box>
 				</Box>
-				<Box m={2}/>
+				<Box m={2} />
 				<Box display="flex" flexDirection="row" justifyContent="center" height="30px">
-					<TextField variant="outlined" rows={1} placeholder="검색어를 입력해주세요" InputProps={{style: {height, padding: '0 14px'}}}/>
-					<Box m={1}/>
+					<TextField variant="outlined" rows={1} placeholder="검색어를 입력해주세요" InputProps={{ style: { height, padding: '0 14px' } }} />
+					<Box m={1} />
 					<Button variant="outlined" color="primary" size="small">검색</Button>
 				</Box>
 			</div>
@@ -130,7 +146,4 @@ function Board() {
 	);
 }
 
-//export default Board;
-export default inject(({ globalStore }) => ({
-    userName: globalStore.userName,
-}))(observer(Board));
+export default Board;

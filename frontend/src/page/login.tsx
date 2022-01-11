@@ -10,6 +10,9 @@ import Container from '@material-ui/core/Container';
 import makeStyles from "@material-ui/core/styles/makeStyles";
 
 import AccountService from '../services/account-service';
+import { selectUserEmail, selectUserPassword, setUserEmail, setUserPassword } from '../modules/user';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { RootState } from '../modules';
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
@@ -30,8 +33,12 @@ const useStyles = makeStyles((theme) => ({
 function Login() {
 	const navigate = useNavigate();
 	const classes = useStyles();
-	const [email, setEmail] = useState<string>('');
-	const [password, setPassword] = useState<string>('');
+	const email = useAppSelector(selectUserEmail);
+	const password = useAppSelector(selectUserPassword);
+	const dispatch = useAppDispatch();
+	// redux-toolkit 적용으로 주석처리
+	// const [email, setEmail] = useState<string>('');
+	// const [password, setPassword] = useState<string>('');
 	const [error, setError] = useState<string>('');
 
 	async function onSubmit() {
@@ -67,7 +74,7 @@ function Login() {
 						autoFocus
 						value={email}
 						onChange={e => {
-							setEmail(e.target.value);
+							dispatch(setUserEmail(e.target.value));
 						}}
 					/>
 					<TextField
@@ -79,7 +86,7 @@ function Login() {
 						type="password"
 						value={password}
 						onChange={e => {
-							setPassword(e.target.value);
+							dispatch(setUserPassword(e.target.value));
 						}}
 					/>
 					<Button type="button" fullWidth variant="contained" color="primary" className={classes.button} onClick={onSubmit}>로그인</Button>

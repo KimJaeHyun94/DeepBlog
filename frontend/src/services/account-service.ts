@@ -13,19 +13,19 @@ export default class AccountService {
         const checkAccessToken = accessToken !== null ? accessToken : '';
 
         const res = await axios.get(
-            config.apiServer + '/account/profile', 
-            { 
+            config.apiServer + '/account/profile',
+            {
                 headers: {
                     'x-access-token': checkAccessToken
                 }
             }
         ).catch(function (error) {
             console.log(error);
-          if (error.response) {
-            return error.response;
-          }
+            if (error.response) {
+                return error.response;
+            }
         });
-        
+
         console.log(res);
         return res.data;
     }
@@ -33,27 +33,26 @@ export default class AccountService {
     //가입 요청.
     public async register(user: User) {
         const res = await axios.post(
-            config.apiServer + '/account/register', 
+            config.apiServer + '/account/register',
             user
         ).catch(function (error) {
             console.log(error);
-          if (error.response) {
-            return error.response;
-          }
+            if (error.response) {
+                return error.response;
+            }
         });
-        
         return res.data;
     }
 
     //로그인 요청.
     public async login(email: string, password: string) {
-        try{
+        try {
             const res = await axios.post(
-                config.apiServer + '/account/login', 
-                {email: email, password: password}
+                config.apiServer + '/account/login',
+                { email: email, password: password }
             );
 
-            if(res.data) {
+            if (res.data) {
                 let token: string = res.data['token'];
 
                 //얻어온 토큰을 세션 스토리지에 보관.
@@ -65,14 +64,14 @@ export default class AccountService {
                     message: token,
                 }
             }
-            
+
             return {
                 type: 'error',
                 message: 'no token'
             }
-        }catch(error) {
+        } catch (error) {
             console.log(error);
-            return { 
+            return {
                 type: 'error',
                 message: 'error.response.data'
             };

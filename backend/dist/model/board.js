@@ -33,6 +33,11 @@ const schema = new mongoose_1.Schema({
     imageFile: { type: String, required: false },
     date: { type: Date, required: true },
     count: { type: Number, required: true },
+    comments: [{
+            body: { type: String, required: true },
+            author: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'user', required: true },
+            createdAt: { type: Date, default: Date.now }
+        }],
 });
 mongoose_auto_increment_1.default.initialize(mongoose_1.default.connection);
 schema.plugin(mongoose_auto_increment_1.default.plugin, {

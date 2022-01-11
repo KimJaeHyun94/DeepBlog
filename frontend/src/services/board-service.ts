@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { Board } from '../model/board';
 import config from '../config';
-
 export default class BoardService {
     public getAccessToken() {
         return sessionStorage.getItem('accessToken');
@@ -23,7 +22,7 @@ export default class BoardService {
         ).catch(function (error) {
             console.log(error);
             if (error.response) {
-              return error;
+                return error;
             }
         });
         
@@ -46,9 +45,9 @@ export default class BoardService {
             }
         ).catch(function (error) {
             console.log(error);
-          if (error.response) {
-            return error.response;
-          }
+            if (error.response) {
+                return error.response;
+            }
         });
         
         return res.data;
@@ -69,9 +68,9 @@ export default class BoardService {
             }
         ).catch(function (error) {
             console.log(error);
-          if (error.response) {
-            return error.response;
-          }
+            if (error.response) {
+                return error.response;
+            }
         });
         
         return res.data;

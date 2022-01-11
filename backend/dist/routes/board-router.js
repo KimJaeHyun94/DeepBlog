@@ -34,9 +34,8 @@ const upload = (0, multer_1.default)({
 //게시판 목록 요청.
 router.post('/list', async (request, response) => {
     const boardService = new board_service_1.BoardService();
+    const { search, page } = request.body;
     try {
-        let search = request.body.search;
-        let page = request.body.page;
         const boardList = await boardService.find(page, search);
         if (!boardList) {
             response.status(400).send('board list not exist');
@@ -52,12 +51,13 @@ router.post('/list', async (request, response) => {
 router.use('/write', authorization_1.verifyToken);
 router.post('/write', async (request, response) => {
     const boardService = new board_service_1.BoardService();
+    const { title, content, imageFile } = request.body;
     try {
         let board = {
             userId: response.locals.email,
-            title: request.body.title,
-            content: request.body.content,
-            imageFile: request.body.imageFile,
+            title: title,
+            content: content,
+            imageFile: imageFile,
             date: (0, moment_1.default)().toDate(),
             count: 0,
         };
@@ -73,6 +73,12 @@ router.post('/write', async (request, response) => {
 router.use('/uploadImage', authorization_1.verifyToken);
 router.post('/uploadImage', upload.single('file'), async (request, response) => {
     response.json({ url: `/img/${request.file.filename}` });
+});
+// 게시물 댓글 업로드 요청
+router.use('./content', authorization_1.verifyToken);
+router.post('/content', async (request, response) => {
+    const boardService = new board_service_1.BoardService();
+    const { comment } = request.body;
 });
 module.exports = router;
 //# sourceMappingURL=board-router.js.map
